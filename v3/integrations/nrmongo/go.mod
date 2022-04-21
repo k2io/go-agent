@@ -6,7 +6,6 @@ go 1.10
 
 require (
 	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/k2io/go-agent/v3 v3.6.0
 	// mongo-driver does not support modules as of Nov 2019.
 	go.mongodb.org/mongo-driver v1.0.0
 )
