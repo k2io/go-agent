@@ -7,7 +7,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/internal"
 )
 
 // NewContext returns a new context.Context that carries the provided

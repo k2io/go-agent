@@ -23,7 +23,7 @@
 // Then change the side-effect import to this package, and open "nrsqlite3" instead:
 //
 //	import (
-//		_ "github.com/newrelic/go-agent/v3/integrations/nrsqlite3"
+//		_ "github.com/k2io/go-agent/v3/integrations/nrsqlite3"
 //	)
 //
 //	func main() {
@@ -77,10 +77,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/k2io/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/newrelic/sqlparse"
 	sqlite3 "github.com/mattn/go-sqlite3"
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/newrelic"
-	"github.com/newrelic/go-agent/v3/newrelic/sqlparse"
 )
 
 var (

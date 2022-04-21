@@ -10,10 +10,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/k2io/go-agent/v3/integrations/nrmicro"
+	proto "github.com/k2io/go-agent/v3/integrations/nrmicro/example/proto"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
 	"github.com/micro/go-micro"
-	"github.com/newrelic/go-agent/v3/integrations/nrmicro"
-	proto "github.com/newrelic/go-agent/v3/integrations/nrmicro/example/proto"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 )
 
 // Greeter is the server struct

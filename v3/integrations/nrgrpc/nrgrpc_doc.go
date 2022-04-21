@@ -106,6 +106,6 @@
 // https://github.com/newrelic/go-agent/blob/master/v3/integrations/nrgrpc/example/client/client.go
 package nrgrpc
 
-import "github.com/newrelic/go-agent/v3/internal"
+import "github.com/k2io/go-agent/v3/internal"
 
 func init() { internal.TrackUsage("integration", "framework", "grpc") }

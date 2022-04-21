@@ -38,7 +38,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/newrelic"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"

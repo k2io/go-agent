@@ -6,10 +6,10 @@ package nrnats
 import (
 	"strings"
 
+	"github.com/k2io/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/internal/integrationsupport"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
 	nats "github.com/nats-io/nats.go"
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/integrationsupport"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 )
 
 // StartPublishSegment creates and starts a `newrelic.MessageProducerSegment`

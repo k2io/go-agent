@@ -16,8 +16,8 @@
 //   	"os"
 //
 //   	"github.com/julienschmidt/httprouter"
-//   	newrelic "github.com/newrelic/go-agent/v3/newrelic"
-//   	"github.com/newrelic/go-agent/v3/integrations/nrhttprouter"
+//   	newrelic "github.com/k2io/go-agent/v3/newrelic"
+//   	"github.com/k2io/go-agent/v3/integrations/nrhttprouter"
 //   )
 //
 //   func main() {
@@ -43,8 +43,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/newrelic/go-agent/v3/internal"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/internal"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
 )
 
 func init() { internal.TrackUsage("integration", "framework", "httprouter") }

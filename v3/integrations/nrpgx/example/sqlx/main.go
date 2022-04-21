@@ -39,7 +39,7 @@
 //
 //	import (
 //		"github.com/jmoiron/sqlx"
-//		_ "github.com/newrelic/go-agent/v3/integrations/nrpgx"
+//		_ "github.com/k2io/go-agent/v3/integrations/nrpgx"
 //	)
 //
 //	func main() {
@@ -75,8 +75,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/newrelic/go-agent/v3/integrations/nrpgx"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
+	_ "github.com/k2io/go-agent/v3/integrations/nrpgx"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
 )
 
 var schema = `

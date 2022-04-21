@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/k2io/go-agent/v3/integrations/nrnats"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
 	nats "github.com/nats-io/nats.go"
-	"github.com/newrelic/go-agent/v3/integrations/nrnats"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 )
 
 var app *newrelic.Application

@@ -29,7 +29,7 @@
 //	import (
 //      "database/sql"
 //
-//		_ "github.com/newrelic/go-agent/v3/integrations/nrpgx"
+//		_ "github.com/k2io/go-agent/v3/integrations/nrpgx"
 //	)
 //
 //	func main() {
@@ -69,9 +69,9 @@ import (
 
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/v4/stdlib"
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/newrelic"
-	"github.com/newrelic/go-agent/v3/newrelic/sqlparse"
+	"github.com/k2io/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/newrelic/sqlparse"
 )
 
 var (

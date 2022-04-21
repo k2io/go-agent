@@ -18,9 +18,9 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/k2io/go-agent/v3/internal"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
 	"github.com/labstack/echo/v4"
-	"github.com/newrelic/go-agent/v3/internal"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 )
 
 func init() { internal.TrackUsage("integration", "framework", "echo") }

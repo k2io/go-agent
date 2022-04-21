@@ -23,7 +23,7 @@
 // Then change the side-effect import to this package, and open "nrsnowflake" instead:
 //
 //	import (
-//		_ "github.com/newrelic/go-agent/v3/integrations/nrsnowflake"
+//		_ "github.com/k2io/go-agent/v3/integrations/nrsnowflake"
 //	)
 //
 //	func main() {
@@ -51,9 +51,9 @@ import (
 	"database/sql"
 	"strconv"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
-	"github.com/newrelic/go-agent/v3/newrelic/sqlparse"
+	"github.com/k2io/go-agent/v3/internal"
+	newrelic "github.com/k2io/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/newrelic/sqlparse"
 	"github.com/snowflakedb/gosnowflake"
 )
 
