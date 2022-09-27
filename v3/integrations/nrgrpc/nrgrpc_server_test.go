@@ -15,9 +15,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 
-	"github.com/newrelic/go-agent/v3/integrations/nrgrpc/testapp"
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/integrations/nrgrpc/testapp"
+	"github.com/k2io/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/newrelic"
 )
 
 // newTestServerAndConn creates a new *grpc.Server and *grpc.ClientConn for use

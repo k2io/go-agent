@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/newrelic/go-agent/v3/integrations/nrmssql"
-	"github.com/newrelic/go-agent/v3/newrelic"
+	_ "github.com/k2io/go-agent/v3/integrations/nrmssql"
+	"github.com/k2io/go-agent/v3/newrelic"
 )
 
 func main() {

@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/integrationsupport"
-	"github.com/newrelic/go-agent/v3/internal/logcontext"
-	"github.com/newrelic/go-agent/v3/internal/sysinfo"
-	"github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/internal/integrationsupport"
+	"github.com/k2io/go-agent/v3/internal/logcontext"
+	"github.com/k2io/go-agent/v3/internal/sysinfo"
+	"github.com/k2io/go-agent/v3/newrelic"
 )
 
 var (

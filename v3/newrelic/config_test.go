@@ -14,9 +14,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
-	"github.com/newrelic/go-agent/v3/internal/utilization"
+	"github.com/k2io/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/internal/crossagent"
+	"github.com/k2io/go-agent/v3/internal/utilization"
 )
 
 type labelsTestCase struct {

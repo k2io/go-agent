@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/integrations/logcontext-v2/zerologWriter"
-	"github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/integrations/logcontext-v2/zerologWriter"
+	"github.com/k2io/go-agent/v3/newrelic"
 	"github.com/rs/zerolog"
 )
 

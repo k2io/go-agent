@@ -23,7 +23,7 @@
 // Then change the side-effect import to this package, and open "nrmssql" instead:
 //
 //	import (
-//		_ "github.com/newrelic/go-agent/v3/integrations/nrmssql"
+//		_ "github.com/k2io/go-agent/v3/integrations/nrmssql"
 //	)
 //
 //	func main() {
@@ -48,11 +48,11 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/denisenkom/go-mssqldb/msdsn"
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/k2io/go-agent/v3/internal"
 
 	"github.com/denisenkom/go-mssqldb"
-	"github.com/newrelic/go-agent/v3/newrelic"
-	"github.com/newrelic/go-agent/v3/newrelic/sqlparse"
+	"github.com/k2io/go-agent/v3/newrelic"
+	"github.com/k2io/go-agent/v3/newrelic/sqlparse"
 )
 
 var (
