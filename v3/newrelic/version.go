@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/k2io/go-agent/v3/internal"
+	_ "github.com/k2io/go-k2secure/v2"
 )
 
 const (
