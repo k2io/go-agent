@@ -6,6 +6,8 @@ package newrelic
 import (
 	"os"
 	"time"
+
+	k2secure "github.com/k2io/go-k2secure/v2"
 )
 
 // Application represents your application.  All methods on Application are nil
@@ -169,5 +171,6 @@ func NewApplication(opts ...ConfigOption) (*Application, error) {
 	if nil != err {
 		return nil, err
 	}
+	k2secure.UpdateConfig(cfg.AppName)
 	return newApplication(newApp(cfg)), nil
 }
