@@ -5,7 +5,7 @@ module github.com/k2io/go-agent/v3/integrations/nrmongo
 go 1.17
 
 require (
-	github.com/k2io/go-agent/v3 v3.18.2
+
 	// mongo-driver does not support modules as of Nov 2019.
 	go.mongodb.org/mongo-driver v1.10.2
 )
