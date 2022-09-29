@@ -8,7 +8,7 @@ go 1.13
 require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.1.0
-	github.com/k2io/go-agent/v3 v3.3.0
+	github.com/k2io/go-k2secure/v2 v2.0.0-20220929060728-f434fdbff641
 	github.com/k2io/go-agent/v3/integrations/nrpq v0.0.0
 )
 

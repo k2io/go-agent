@@ -7,5 +7,5 @@ go 1.9
 require (
 	github.com/mattn/go-sqlite3 v1.0.0
 	// v3.3.0 includes the new location of ParseQuery
-	github.com/k2io/go-agent/v3 v3.3.0
+	github.com/k2io/go-k2secure/v2 v2.0.0-20220929060728-f434fdbff641
 )
