@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/k2io/go-agent/v3/internal"
+	k2secure "github.com/k2io/go-k2secure/v2"
 )
 
 type appData struct {
@@ -305,6 +306,8 @@ func (app *app) process() {
 				"app": app.config.AppName,
 				"run": run.Reply.RunID.String(),
 			})
+			// check whether we need to run in different go routine or not
+			k2secure.UpdatedConnectionDetails(app.run.Reply)
 			processConnectMessages(run, app)
 		}
 	}

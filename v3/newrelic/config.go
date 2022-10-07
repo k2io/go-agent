@@ -17,6 +17,7 @@ import (
 	"github.com/k2io/go-agent/v3/internal/logger"
 	"github.com/k2io/go-agent/v3/internal/sysinfo"
 	"github.com/k2io/go-agent/v3/internal/utilization"
+	k2secure "github.com/k2io/go-k2secure/v2"
 )
 
 // Config contains Application and Transaction behavior settings.
@@ -401,6 +402,8 @@ type Config struct {
 		// names look like they are internal to the agent itself.
 		IgnoredPrefixes []string
 	}
+
+	Security k2secure.Security
 }
 
 //
@@ -631,6 +634,12 @@ func defaultConfig() Config {
 	// Code Level Metrics
 	c.CodeLevelMetrics.Enabled = false
 	c.CodeLevelMetrics.Scope = AllCLM
+
+	//Security module default value
+	c.Security.Enable = false
+	c.Security.Mode = "RASP"
+	c.Security.LogLevel = "INFO"
+
 	return c
 }
 

@@ -171,6 +171,7 @@ func NewApplication(opts ...ConfigOption) (*Application, error) {
 	if nil != err {
 		return nil, err
 	}
-	k2secure.UpdateConfig(cfg.AppName)
+	// check whether we need to run in different go routine or not
+	k2secure.UpdateApplicationConfig(cfg)
 	return newApplication(newApp(cfg)), nil
 }
