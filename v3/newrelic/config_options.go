@@ -6,10 +6,13 @@ package newrelic
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"gopkg.in/yaml.v2"
 )
 
 // ConfigOption configures the Config when provided to NewApplication.
@@ -329,6 +332,70 @@ func configFromEnvironment(getenv func(string) string) ConfigOption {
 	}
 }
 
+// NEW_RELIC_SECURITY_ENABLE
+// NEW_RELIC_SECURITY_LOG_LEVEL
+// NEW_RELIC_SECURITY_MODE
+// NEW_RELIC_SECURITY_SECURITY_HOME_PATH
+// NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL
+// NEW_RELIC_SECURITY_RESOURCE_SERCICE_END_POINT_URL
+// NEW_RELIC_SECURITY_Detection_DisableRxss
+
+func ConfigSecurityFromEnvironment() ConfigOption {
+	return configSecurityFromEnvironment(os.Getenv)
+}
+
+func configSecurityFromEnvironment(getenv func(string) string) ConfigOption {
+	return func(cfg *Config) {
+		// Because fields could have been assigned in a previous
+		// ConfigOption, we only want to assign fields using environment
+		// variables that have been populated.  This is especially
+		// relevant for the string case where no processing occurs.
+		assignBool := func(field *bool, name string) {
+			if env := getenv(name); env != "" {
+				if b, err := strconv.ParseBool(env); nil != err {
+					cfg.Error = fmt.Errorf("invalid %s value: %s", name, env)
+				} else {
+					*field = b
+				}
+			}
+		}
+		assignString := func(field *string, name string) {
+			if env := getenv(name); env != "" {
+				*field = env
+			}
+		}
+
+		assignBool(&cfg.Security.Enable, "NEW_RELIC_SECURITY_ENABLE")
+		assignString(&cfg.Security.SecurityHomePath, "NEW_RELIC_SECURITY_SECURITY_HOME_PATH")
+		assignString(&cfg.Security.LogLevel, "NEW_RELIC_SECURITY_LOG_LEVEL")
+		assignString(&cfg.Security.ValidatorServiceEndpointUrl, "NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL")
+		assignString(&cfg.Security.ResourceServiceEndpointUrl, "NEW_RELIC_SECURITY_RESOURCE_SERCICE_END_POINT_URL")
+		assignString(&cfg.Security.Mode, "NEW_RELIC_SECURITY_MODE")
+		assignBool(&cfg.Security.ForceCompleteDisable, "NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE")
+		assignBool(&cfg.Security.Detection.DisableRxss, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
+	}
+}
+
+func ConfigSecurityFromYaml() ConfigOption {
+	return configSecurityFromYaml()
+}
+func configSecurityFromYaml() ConfigOption {
+	return func(cfg *Config) {
+		confgFilePath := os.Getenv("NEW_RELIC_SECURITY_CONFIG_YAML_PATH")
+		if confgFilePath == "" {
+			cfg.Error = fmt.Errorf("invalid %s value: %s", confgFilePath, "NEW_RELIC_SECURITY_CONFIG_YAML_PATH")
+		}
+		data, err := ioutil.ReadFile(confgFilePath)
+		if err == nil {
+			err = yaml.Unmarshal(data, &cfg.Security)
+			if err != nil {
+				cfg.Error = fmt.Errorf("Error while unmarshal config file %s value: %s", confgFilePath, err)
+			}
+		} else {
+			cfg.Error = fmt.Errorf("Error while reading config file %s , %s", confgFilePath, err)
+		}
+	}
+}
 func getLogDest(env string) io.Writer {
 	switch env {
 	case "stdout", "Stdout", "STDOUT":

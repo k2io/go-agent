@@ -17,7 +17,7 @@ import (
 	"github.com/k2io/go-agent/v3/internal/logger"
 	"github.com/k2io/go-agent/v3/internal/sysinfo"
 	"github.com/k2io/go-agent/v3/internal/utilization"
-	k2secure "github.com/k2io/go-k2secure/v2"
+	k2secure "github.com/k2io/go-k2secure/v2/k2secure_model"
 )
 
 // Config contains Application and Transaction behavior settings.
