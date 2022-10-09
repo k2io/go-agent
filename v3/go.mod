@@ -8,6 +8,6 @@ require (
 )
 
 require (
-	github.com/k2io/go-k2secure/v2 v2.0.0-20221009062520-14e980febfb4 // indirect
+	github.com/k2io/go-k2secure/v2 v2.0.0-20221009081630-9b1787a6b76b // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
