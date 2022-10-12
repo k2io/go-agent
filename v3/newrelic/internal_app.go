@@ -306,8 +306,7 @@ func (app *app) process() {
 				"app": app.config.AppName,
 				"run": run.Reply.RunID.String(),
 			})
-			// check whether we need to run in different go routine or not
-			k2secure.UpdatedConnectionDetails(app.run.Reply)
+			app.Connected()
 			processConnectMessages(run, app)
 		}
 	}
@@ -690,4 +689,18 @@ func (app *app) ExpectTxnTraces(t internal.Validator, want []internal.WantTxnTra
 func (app *app) ExpectSlowQueries(t internal.Validator, want []internal.WantSlowQuery) {
 	t = extendValidator(t, "slow queries")
 	expectSlowQueries(t, app.testHarvest.SlowSQLs, want)
+}
+
+func (app *app) Connected() {
+	//This callback function used to share the connection details with the secure agent
+	runningAppData := map[string]string{}
+	if app != nil && app.run != nil {
+		runningAppData["hostname"] = app.run.Config.hostname
+		runningAppData["entityName"] = app.run.firstAppName
+		if app.run != nil {
+			runningAppData["entityGUID"] = app.run.Reply.EntityGUID
+			runningAppData["agentRunID"] = app.run.Reply.RunID.String()
+		}
+	}
+	k2secure.Connect(runningAppData)
 }
