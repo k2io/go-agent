@@ -699,7 +699,7 @@ func (app *app) Connected() {
 		runningAppData["entityName"] = app.run.firstAppName
 		if app.run != nil {
 			runningAppData["entityGUID"] = app.run.Reply.EntityGUID
-			runningAppData["agentRunID"] = app.run.Reply.RunID.String()
+			runningAppData["agentRunId"] = app.run.Reply.RunID.String()
 		}
 	}
 	k2secure.Connect(runningAppData)
