@@ -8,6 +8,6 @@ require (
 
 	// mongo-driver does not support modules as of Nov 2019.
 	go.mongodb.org/mongo-driver v1.10.2
-	github.com/k2io/go-k2secure/v2 v2.0.0-20221012111020-12a3fdf0cc74 // indirect
-	github.com/k2io/go-k2secure/k2secure/k2secure_mongowrap/v2 v2.0.0-20221009062520-14e980febfb4 // indirect
+	github.com/k2io/go-k2secure/v2 v2.0.0-20221031115912-88f9a31e4977 // indirect
+	github.com/k2io/go-k2secure/k2secure/k2secure_mongowrap/v2 v2.0.0-20221031115912-88f9a31e4977 // indirect
 )
