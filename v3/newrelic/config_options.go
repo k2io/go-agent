@@ -381,7 +381,7 @@ func ConfigSecurityFromYaml() ConfigOption {
 }
 func configSecurityFromYaml() ConfigOption {
 	return func(cfg *Config) {
-		confgFilePath := os.Getenv("NEW_RELIC_SECURITY_CONFIG_YAML_PATH")
+		confgFilePath := os.Getenv("NEW_RELIC_SECURITY_CONFIG_PATH")
 		if confgFilePath == "" {
 			cfg.Error = fmt.Errorf("invalid %s value: %s", confgFilePath, "NEW_RELIC_SECURITY_CONFIG_YAML_PATH")
 		}
