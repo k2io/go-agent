@@ -639,6 +639,7 @@ func defaultConfig() Config {
 	c.Security.Enable = false
 	c.Security.Mode = "RASP"
 	c.Security.LogLevel = "INFO"
+	c.Security.Policy.Version = "enforce"
 
 	return c
 }
