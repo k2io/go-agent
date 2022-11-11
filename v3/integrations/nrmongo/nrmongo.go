@@ -37,7 +37,6 @@ import (
 
 	"github.com/k2io/go-agent/v3/internal"
 	newrelic "github.com/k2io/go-agent/v3/newrelic"
-	_ "github.com/k2io/go-k2secure/k2secure/k2secure_mongowrap/v2"
 	"go.mongodb.org/mongo-driver/event"
 )
 
