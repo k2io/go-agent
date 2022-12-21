@@ -694,13 +694,15 @@ func (app *app) ExpectSlowQueries(t internal.Validator, want []internal.WantSlow
 func (app *app) Connected() {
 	//This callback function used to share the connection details with the secure agent
 	runningAppData := map[string]string{}
+	accountID := ""
 	if app != nil && app.run != nil {
 		runningAppData["hostname"] = app.run.Config.hostname
 		runningAppData["entityName"] = app.run.firstAppName
 		if app.run != nil {
 			runningAppData["entityGUID"] = app.run.Reply.EntityGUID
 			runningAppData["agentRunId"] = app.run.Reply.RunID.String()
+			accountID = app.run.Reply.AccountID
 		}
 	}
-	k2secure.Connect(runningAppData)
+	k2secure.Connect(runningAppData, accountID)
 }
