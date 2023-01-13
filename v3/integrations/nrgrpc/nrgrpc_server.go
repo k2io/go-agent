@@ -66,6 +66,7 @@ func startTransaction(ctx context.Context, app *newrelic.Application, fullMethod
 		URL:       url,
 		Method:    method,
 		Transport: newrelic.TransportHTTP,
+		Type:      "gRPC",
 	}
 	txn := app.StartTransaction(method)
 	txn.SetWebRequest(webReq)
@@ -308,6 +309,7 @@ func UnaryServerInterceptor(app *newrelic.Application, options ...HandlerOption)
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		txn := startTransaction(ctx, app, info.FullMethod)
+		newrelic.SecureAgent.SendEvent("GRPC", req)
 		defer txn.End()
 
 		ctx = newrelic.NewContext(ctx, txn)
@@ -325,6 +327,11 @@ type wrappedServerStream struct {
 func (s wrappedServerStream) Context() context.Context {
 	ctx := s.ServerStream.Context()
 	return newrelic.NewContext(ctx, s.txn)
+}
+
+func (s wrappedServerStream) RecvMsg(msg interface{}) error {
+	newrelic.SecureAgent.SendEvent("GRPC", msg)
+	return s.ServerStream.RecvMsg(msg)
 }
 
 func newWrappedServerStream(stream grpc.ServerStream, txn *newrelic.Transaction) grpc.ServerStream {

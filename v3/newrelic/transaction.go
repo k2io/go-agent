@@ -4,8 +4,11 @@
 package newrelic
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -39,6 +42,9 @@ func (txn *Transaction) End() {
 		// recover must be called in the function directly being deferred,
 		// not any nested call!
 		r = recover()
+	}
+	if txn.thread.IsWeb {
+		SecureAgent.SendEvent("INBOUND_END", r)
 	}
 	txn.thread.logAPIError(txn.thread.End(r), "end transaction", nil)
 }
@@ -168,11 +174,14 @@ func (txn *Transaction) SetWebRequestHTTP(r *http.Request) {
 		return
 	}
 	wr := WebRequest{
-		Header:    r.Header,
-		URL:       r.URL,
-		Method:    r.Method,
-		Transport: transport(r),
-		Host:      r.Host,
+		Header:     r.Header,
+		URL:        r.URL,
+		Method:     r.Method,
+		Transport:  transport(r),
+		Host:       r.Host,
+		Body:       reqBody(r),
+		ServerName: serverName(r),
+		Type:       "HTTP",
 	}
 	txn.SetWebRequest(wr)
 }
@@ -185,6 +194,29 @@ func transport(r *http.Request) TransportType {
 		return TransportHTTP
 	}
 	return TransportUnknown
+}
+func serverName(r *http.Request) string {
+	if strings.HasPrefix(r.Proto, "HTTP") {
+		if r.TLS != nil {
+			return r.TLS.ServerName
+		}
+	}
+	return ""
+}
+func reqBody(req *http.Request) []byte {
+	var bodyBuffer bytes.Buffer
+	requestBuffer := make([]byte, 0)
+	bodyReader := io.TeeReader(req.Body, &bodyBuffer)
+
+	if bodyReader != nil {
+		reqBuffer, err := ioutil.ReadAll(bodyReader)
+		if err == nil {
+			requestBuffer = reqBuffer
+		}
+		r := ioutil.NopCloser(bytes.NewBuffer(requestBuffer))
+		req.Body = r
+	}
+	return bytes.TrimRight(requestBuffer, "\x00")
 }
 
 // SetWebRequest marks the transaction as a web transaction.  SetWebRequest
@@ -199,6 +231,7 @@ func (txn *Transaction) SetWebRequest(r WebRequest) {
 	if nil == txn.thread {
 		return
 	}
+	SecureAgent.SendEvent("INBOUND", r)
 	txn.thread.logAPIError(txn.thread.SetWebRequest(r), "set web request", nil)
 }
 
@@ -258,6 +291,9 @@ func (txn *Transaction) startSegmentAt(at time.Time) SegmentStartTime {
 //	// ... code you want to time here ...
 //	segment.End()
 func (txn *Transaction) StartSegment(name string) *Segment {
+	if name == "async" {
+		SecureAgent.SendEvent("NEW_GOROUTINE_LINKER", txn)
+	}
 	return &Segment{
 		StartTime: txn.StartSegmentNow(),
 		Name:      name,
@@ -451,7 +487,9 @@ func (txn *Transaction) NewGoroutine() *Transaction {
 	if nil == txn.thread {
 		return nil
 	}
-	return txn.thread.NewGoroutine()
+	newTxn := txn.thread.NewGoroutine()
+	SecureAgent.SendEvent("NEW_GOROUTINE", newTxn)
+	return newTxn
 }
 
 // GetTraceMetadata returns distributed tracing identifiers.  Empty
@@ -548,6 +586,11 @@ type WebRequest struct {
 	// This is the value of the `Host` header. Go does not add it to the
 	// http.Header object and so must be passed separately.
 	Host string
+
+	//secure agent need these for validation
+	Body       []byte
+	ServerName string
+	Type       string
 }
 
 // LinkingMetadata is returned by Transaction.GetLinkingMetadata.  It contains

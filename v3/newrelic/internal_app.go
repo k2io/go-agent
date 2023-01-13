@@ -263,6 +263,7 @@ func (app *app) process() {
 
 			close(app.shutdownComplete)
 			app.setObserver(nil)
+			SecureAgent.DeactivateSecurity()
 			return
 		case resp := <-app.collectorErrorChan:
 			run = nil
@@ -306,6 +307,7 @@ func (app *app) process() {
 				"run": run.Reply.RunID.String(),
 			})
 			processConnectMessages(run, app)
+			SecureAgent.RefreshState(getLinkedMetaData(app))
 		}
 	}
 }

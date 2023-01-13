@@ -67,6 +67,8 @@ type DatastoreSegment struct {
 	// being executed.  This becomes the db.instance attribute on Span events
 	// and Transaction Trace segments.
 	DatabaseName string
+
+	SecureAgentEvent interface{}
 }
 
 // ExternalSegment instruments external calls.  StartExternalSegment is the
@@ -100,7 +102,8 @@ type ExternalSegment struct {
 
 	// statusCode is the status code for the response.  This value takes
 	// precedence over the status code set on the Response.
-	statusCode *int
+	statusCode       *int
+	secureAgentevent interface{}
 }
 
 // MessageProducerSegment instruments calls to add messages to a queueing system.
@@ -208,6 +211,11 @@ func (s *ExternalSegment) End() {
 		}
 		s.StartTime.thread.logAPIError(err, "end external segment", extraDetails)
 	}
+
+	if (s.statusCode != nil && *s.statusCode != 404) || (s.Response != nil && s.Response.StatusCode != 404) {
+		SecureAgent.SendExitEvent(s.secureAgentevent, nil)
+	}
+
 }
 
 // AddAttribute adds a key value pair to the current MessageProducerSegment.
@@ -287,15 +295,15 @@ func StartExternalSegment(txn *Transaction, request *http.Request) *ExternalSegm
 		StartTime: txn.StartSegmentNow(),
 		Request:   request,
 	}
-
+	s.secureAgentevent = SecureAgent.SendEvent("OUTBOUND", request)
 	if request != nil && request.Header != nil {
 		for key, values := range s.outboundHeaders() {
 			for _, value := range values {
 				request.Header.Set(key, value)
 			}
 		}
+		SecureAgent.DistributedTraceHeaders(request, s.secureAgentevent)
 	}
-
 	return s
 }
 
