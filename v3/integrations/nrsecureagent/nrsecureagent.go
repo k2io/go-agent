@@ -27,7 +27,7 @@ func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 		}
 	}
 	c.Security.Policy.Version = "overridden"
-	secureAgent := secyreAgent.InitSecurityAgent(c.Security, app)
+	secureAgent := secyreAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License)
 	newrelic.InitSecurityAgent(secureAgent)
 	return nil
 }

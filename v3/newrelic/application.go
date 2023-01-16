@@ -138,7 +138,7 @@ func (app *Application) Shutdown(timeout time.Duration) {
 	app.app.Shutdown(timeout)
 }
 
-func (app *Application) GetAgentConfig() *Config {
+func (app *Application) Config() *Config {
 	if nil == app {
 		return nil
 	}

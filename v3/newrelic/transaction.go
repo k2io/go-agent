@@ -594,6 +594,38 @@ type WebRequest struct {
 	Type       string
 }
 
+func (webrequest WebRequest) GetHeader() http.Header {
+	return webrequest.Header
+}
+
+func (webrequest WebRequest) GetURL() *url.URL {
+	return webrequest.URL
+}
+
+func (webrequest WebRequest) GetMethod() string {
+	return webrequest.Method
+}
+
+func (webrequest WebRequest) GetTransport() string {
+	return webrequest.Transport.toString()
+}
+
+func (webrequest WebRequest) GetHost() string {
+	return webrequest.Host
+}
+
+func (webrequest WebRequest) GetBody() []byte {
+	return webrequest.Body
+}
+
+func (webrequest WebRequest) GetServerName() string {
+	return webrequest.ServerName
+}
+
+func (webrequest WebRequest) Type1() string {
+	return webrequest.Type
+}
+
 // LinkingMetadata is returned by Transaction.GetLinkingMetadata.  It contains
 // identifiers needed to link data to a trace or entity.
 type LinkingMetadata struct {
