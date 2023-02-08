@@ -175,14 +175,15 @@ func (txn *Transaction) SetWebRequestHTTP(r *http.Request) {
 		return
 	}
 	wr := WebRequest{
-		Header:     r.Header,
-		URL:        r.URL,
-		Method:     r.Method,
-		Transport:  transport(r),
-		Host:       r.Host,
-		Body:       reqBody(r),
-		ServerName: serverName(r),
-		Type:       "HTTP",
+		Header:        r.Header,
+		URL:           r.URL,
+		Method:        r.Method,
+		Transport:     transport(r),
+		Host:          r.Host,
+		Body:          reqBody(r),
+		ServerName:    serverName(r),
+		Type:          "HTTP",
+		RemoteAddress: r.RemoteAddr,
 	}
 	txn.SetWebRequest(wr)
 }
@@ -589,9 +590,10 @@ type WebRequest struct {
 	Host string
 
 	//secure agent need these for validation
-	Body       []byte
-	ServerName string
-	Type       string
+	Body          []byte
+	ServerName    string
+	Type          string
+	RemoteAddress string
 }
 
 func (webrequest WebRequest) GetHeader() http.Header {
@@ -624,6 +626,9 @@ func (webrequest WebRequest) GetServerName() string {
 
 func (webrequest WebRequest) Type1() string {
 	return webrequest.Type
+}
+func (webrequest WebRequest) GetRemoteAddress() string {
+	return webrequest.RemoteAddress
 }
 
 // LinkingMetadata is returned by Transaction.GetLinkingMetadata.  It contains

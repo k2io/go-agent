@@ -60,7 +60,6 @@ func ConfigSecurityFromYaml() ConfigOption {
 // NEW_RELIC_SECURITY_MODE
 // NEW_RELIC_SECURITY_SECURITY_HOME_PATH
 // NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL
-// NEW_RELIC_SECURITY_RESOURCE_SERCICE_END_POINT_URL
 // NEW_RELIC_SECURITY_Detection_DisableRxss
 
 func ConfigSecurityFromEnvironment() ConfigOption {
@@ -85,7 +84,6 @@ func ConfigSecurityFromEnvironment() ConfigOption {
 		assignString(&cfg.Security.SecurityHomePath, "NEW_RELIC_SECURITY_SECURITY_HOME_PATH")
 		assignString(&cfg.Security.LogLevel, "NEW_RELIC_SECURITY_LOG_LEVEL")
 		assignString(&cfg.Security.ValidatorServiceEndpointUrl, "NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL")
-		assignString(&cfg.Security.ResourceServiceEndpointUrl, "NEW_RELIC_SECURITY_RESOURCE_SERCICE_END_POINT_URL")
 		assignString(&cfg.Security.Mode, "NEW_RELIC_SECURITY_MODE")
 		assignBool(&cfg.Security.ForceCompleteDisable, "NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE")
 		assignBool(&cfg.Security.Detection.DisableRxss, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
