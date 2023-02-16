@@ -6,13 +6,13 @@ import (
 	"os"
 	"strconv"
 
-	secyreAgent "github.com/k2io/go-k2secure/v2"
+	secAgent "github.com/k2io/go-k2secure"
 	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 	"gopkg.in/yaml.v2"
 )
 
 type SecurityConfig struct {
-	secyreAgent.SecurityAgentConfig
+	secAgent.SecurityAgentConfig
 	Error error
 }
 
@@ -27,7 +27,7 @@ func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 		}
 	}
 	c.Security.Policy.Version = "overridden"
-	secureAgent := secyreAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License)
+	secureAgent := secAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License)
 	newrelic.InitSecurityAgent(secureAgent)
 	return nil
 }
