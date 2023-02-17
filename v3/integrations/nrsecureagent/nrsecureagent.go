@@ -42,7 +42,6 @@ func ConfigSecurityFromYaml() ConfigOption {
 		if confgFilePath == "" {
 			cfg.Error = fmt.Errorf("invalid %s value: %s", confgFilePath, "NEW_RELIC_SECURITY_CONFIG_PATH")
 		}
-		fmt.Println(confgFilePath)
 		data, err := ioutil.ReadFile(confgFilePath)
 		if err == nil {
 			err = yaml.Unmarshal(data, &cfg.Security)
