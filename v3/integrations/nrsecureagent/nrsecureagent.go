@@ -40,16 +40,19 @@ func ConfigSecurityFromYaml() ConfigOption {
 	return func(cfg *SecurityConfig) {
 		confgFilePath := os.Getenv("NEW_RELIC_SECURITY_CONFIG_PATH")
 		if confgFilePath == "" {
-			cfg.Error = fmt.Errorf("invalid %s value: %s", confgFilePath, "NEW_RELIC_SECURITY_CONFIG_PATH")
+			cfg.Error = fmt.Errorf("Invalid value: NEW_RELIC_SECURITY_CONFIG_PATH can't be empty")
+			return
 		}
 		data, err := ioutil.ReadFile(confgFilePath)
 		if err == nil {
 			err = yaml.Unmarshal(data, &cfg.Security)
 			if err != nil {
 				cfg.Error = fmt.Errorf("Error while unmarshal config file %s value: %s", confgFilePath, err)
+				return
 			}
 		} else {
 			cfg.Error = fmt.Errorf("Error while reading config file %s , %s", confgFilePath, err)
+			return
 		}
 	}
 }
