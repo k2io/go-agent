@@ -111,6 +111,13 @@ func WrapHandleFunc(app *Application, pattern string, handler func(http.Response
 	return p, func(w http.ResponseWriter, r *http.Request) { h.ServeHTTP(w, r) }
 }
 
+//WrapListen
+
+func WrapListen(add string) string {
+	SecureAgent.SendEvent("APP_INFO", add)
+	return add
+}
+
 // NewRoundTripper creates an http.RoundTripper to instrument external requests
 // and add distributed tracing headers.  The http.RoundTripper returned creates
 // an external segment before delegating to the original http.RoundTripper
