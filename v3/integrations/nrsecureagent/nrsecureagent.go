@@ -26,8 +26,7 @@ func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 			}
 		}
 	}
-	c.Security.Policy.Version = "overridden"
-	secureAgent := secAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License)
+	secureAgent := secAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License, app.Config().Logger.DebugEnabled())
 	newrelic.InitSecurityAgent(secureAgent)
 	return nil
 }
@@ -82,12 +81,10 @@ func ConfigSecurityFromEnvironment() ConfigOption {
 			}
 		}
 
-		assignBool(&cfg.Security.Enable, "NEW_RELIC_SECURITY_ENABLE")
-		assignString(&cfg.Security.SecurityHomePath, "NEW_RELIC_SECURITY_SECURITY_HOME_PATH")
-		assignString(&cfg.Security.LogLevel, "NEW_RELIC_SECURITY_LOG_LEVEL")
-		assignString(&cfg.Security.ValidatorServiceEndpointUrl, "NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL")
+		assignBool(&cfg.Security.Enabled, "NEW_RELIC_SECURITY_ENABLE")
+		assignString(&cfg.Security.Validator_service_url, "NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL")
 		assignString(&cfg.Security.Mode, "NEW_RELIC_SECURITY_MODE")
-		assignBool(&cfg.Security.ForceCompleteDisable, "NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE")
-		assignBool(&cfg.Security.Detection.DisableRxss, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
+		assignBool(&cfg.Security.Agent.Enabled, "NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE")
+		assignBool(&cfg.Security.Detection.Rci.Enabled, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
 	}
 }
