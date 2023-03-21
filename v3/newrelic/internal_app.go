@@ -4,6 +4,7 @@
 package newrelic
 
 import (
+	"compress/gzip"
 	"errors"
 	"fmt"
 	"io"
@@ -71,16 +72,30 @@ func (app *app) doHarvest(h *harvest, harvestStart time.Time, run *appRun) {
 	payloads := h.Payloads(app.config.DistributedTracer.Enabled)
 	for _, p := range payloads {
 		cmd := p.EndpointMethod()
+		var data []byte
+
+		defer func() {
+			if r := recover(); r != nil {
+				app.Warn("panic occured when creating harvest data", map[string]interface{}{
+					"cmd":   cmd,
+					"panic": r,
+				})
+
+				// make sure the loop continues
+				data = nil
+			}
+		}()
+
 		data, err := p.Data(run.Reply.RunID.String(), harvestStart)
 
-		if nil != err {
+		if err != nil {
 			app.Warn("unable to create harvest data", map[string]interface{}{
 				"cmd":   cmd,
 				"error": err.Error(),
 			})
 			continue
 		}
-		if nil == data {
+		if data == nil {
 			continue
 		}
 
@@ -103,7 +118,7 @@ func (app *app) doHarvest(h *harvest, harvestStart time.Time, run *appRun) {
 			return
 		}
 
-		if nil != resp.Err {
+		if resp.Err != nil {
 			app.Warn("harvest failure", map[string]interface{}{
 				"cmd":         cmd,
 				"error":       resp.Err.Error(),
@@ -421,6 +436,11 @@ func newApp(c config) *app {
 				Timeout:   collectorTimeout,
 			},
 			Logger: c.Logger,
+			GzipWriterPool: &sync.Pool{
+				New: func() interface{} {
+					return gzip.NewWriter(io.Discard)
+				},
+			},
 		},
 	}
 

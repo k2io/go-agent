@@ -1,5 +1,4 @@
-
-[![Community Plus header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Plus.png)](https://opensource.newrelic.com/oss-category/#community-plus)
+[![Community Plus header](https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png)](https://opensource.newrelic.com/oss-category/#community-plus)
 
 # New Relic Go Agent [![GoDoc](https://godoc.org/github.com/newrelic/go-agent?status.svg)](https://godoc.org/github.com/newrelic/go-agent/v3/newrelic/) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/go-agent)](https://goreportcard.com/report/github.com/newrelic/go-agent)
 
@@ -90,6 +89,7 @@ package primitives can be found [here](GUIDE.md#datastore-segments).
 | ------------- | ------------- | - |
 | [lib/pq](https://github.com/lib/pq) | [v3/integrations/nrpq](https://godoc.org/github.com/newrelic/go-agent/v3/integrations/nrpq) | Instrument PostgreSQL driver (`pq` driver for `database/sql`) |
 | [jackc/pgx](https://github.com/jackc/pgx) | [v3/integrations/nrpgx](https://godoc.org/github.com/newrelic/go-agent/v3/integrations/nrpgx) | Instrument PostgreSQL driver (`pgx` driver for `database/sql`)|
+| [jackc/pgx/v5](https://github.com/jackc/pgx/v5) | [v3/integrations/nrpgx5](https://godoc.org/github.com/newrelic/go-agent/v3/integrations/nrpgx5) | Instrument PostgreSQL driver (`pgx/v5` driver for `database/sql`)|
 | [go-mssqldb](github.com/denisenkom/go-mssqldb) | [v3/integrations/nrmssql](https://godoc.org/github.com/newrelic/go-agent/v3/integrations/nrmssql) | Instrument MS SQL driver |
 | [go-sql-driver/mysql](https://github.com/go-sql-driver/mysql) | [v3/integrations/nrmysql](https://godoc.org/github.com/newrelic/go-agent/v3/integrations/nrmysql) | Instrument MySQL driver |
 | [elastic/go-elasticsearch](https://github.com/elastic/go-elasticsearch) | [v3/integrations/nrelasticsearch-v7](https://godoc.org/github.com/newrelic/go-agent/v3/integrations/nrelasticsearch-v7) | Instrument Elasticsearch datastore calls |

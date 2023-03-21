@@ -265,11 +265,11 @@ func (thd *thread) StoreLog(log *logEvent) {
 }
 
 func (txn *txn) freezeName() {
-	if txn.ignore || ("" != txn.FinalName) {
+	if txn.ignore || (txn.FinalName != "") {
 		return
 	}
 	txn.FinalName = txn.appRun.createTransactionName(txn.Name, txn.IsWeb)
-	if "" == txn.FinalName {
+	if txn.FinalName == "" {
 		txn.ignore = true
 	}
 }
@@ -366,7 +366,8 @@ func headersJustWritten(thd *thread, code int, hdr http.Header) {
 	if txn.appRun.responseCodeIsError(code) {
 		e := txnErrorFromResponseCode(time.Now(), code)
 		e.Stack = getStackTrace()
-		thd.noticeErrorInternal(e)
+		expect := txn.appRun.responseCodeIsExpected(code)
+		thd.noticeErrorInternal(e, expect)
 	}
 }
 
@@ -425,7 +426,7 @@ func (thd *thread) End(recovered interface{}) error {
 	if nil != recovered {
 		e := txnErrorFromPanic(time.Now(), recovered)
 		e.Stack = getStackTrace()
-		thd.noticeErrorInternal(e)
+		thd.noticeErrorInternal(e, false)
 		log.Println(string(debug.Stack()))
 	}
 
@@ -447,7 +448,7 @@ func (thd *thread) End(recovered interface{}) error {
 	txn.ApdexThreshold = internal.CalculateApdexThreshold(txn.Reply, txn.FinalName)
 
 	if txn.getsApdex() {
-		if txn.HasErrors() {
+		if txn.HasErrors() && txn.NoticeErrors() {
 			txn.Zone = apdexFailing
 		} else {
 			txn.Zone = calculateApdexZone(txn.ApdexThreshold, txn.Duration)
@@ -461,7 +462,7 @@ func (thd *thread) End(recovered interface{}) error {
 			"name":          txn.FinalName,
 			"duration_ms":   txn.Duration.Seconds() * 1000.0,
 			"ignored":       txn.ignore,
-			"app_connected": "" != txn.Reply.RunID,
+			"app_connected": txn.Reply.RunID != "",
 		})
 	}
 
@@ -559,10 +560,16 @@ const (
 	securityPolicyErrorMsg = "message removed by security policy"
 )
 
-func (thd *thread) noticeErrorInternal(err errorData) error {
+func (thd *thread) noticeErrorInternal(err errorData, expect bool) error {
 	txn := thd.txn
 	if !txn.Config.ErrorCollector.Enabled {
 		return errorsDisabled
+	}
+
+	if !expect {
+		thd.noticeErrors = true
+	} else {
+		thd.expectedErrors = true
 	}
 
 	if nil == txn.Errors {
@@ -643,18 +650,19 @@ func errorAttributesMethod(err error) map[string]interface{} {
 	return nil
 }
 
-func errDataFromError(input error) (data errorData, err error) {
+func errDataFromError(input error, expect bool) (data errorData, err error) {
 	cause := errorCause(input)
-
+	validatedErrorMsg := truncateStringMessageIfLong(input.Error())
 	data = errorData{
-		When: time.Now(),
-		Msg:  input.Error(),
+		When:   time.Now(),
+		Msg:    validatedErrorMsg,
+		Expect: expect,
 	}
 
-	if c := errorClassMethod(input); "" != c {
+	if c := errorClassMethod(input); c != "" {
 		// If the error implements ErrorClasser, use that.
 		data.Klass = c
-	} else if c := errorClassMethod(cause); "" != c {
+	} else if c := errorClassMethod(cause); c != "" {
 		// Otherwise, if the error's cause implements ErrorClasser, use that.
 		data.Klass = c
 	} else {
@@ -700,7 +708,7 @@ func errDataFromError(input error) (data errorData, err error) {
 	return data, nil
 }
 
-func (thd *thread) NoticeError(input error) error {
+func (thd *thread) NoticeError(input error, expect bool) error {
 	txn := thd.txn
 	txn.Lock()
 	defer txn.Unlock()
@@ -713,7 +721,7 @@ func (thd *thread) NoticeError(input error) error {
 		return errNilError
 	}
 
-	data, err := errDataFromError(input)
+	data, err := errDataFromError(input, expect)
 	if nil != err {
 		return err
 	}
@@ -722,7 +730,7 @@ func (thd *thread) NoticeError(input error) error {
 		data.ExtraAttributes = nil
 	}
 
-	return thd.noticeErrorInternal(data)
+	return thd.noticeErrorInternal(data, expect)
 }
 
 func (txn *txn) SetName(name string) error {
@@ -822,7 +830,7 @@ func (txn *txn) BrowserTimingHeader() (*BrowserTimingHeader, error) {
 			ApplicationID:         txn.Reply.AppID,
 			TransactionName:       name,
 			QueueTimeMillis:       txn.Queuing.Nanoseconds() / (1000 * 1000),
-			ApplicationTimeMillis: time.Now().Sub(txn.Start).Nanoseconds() / (1000 * 1000),
+			ApplicationTimeMillis: time.Since(txn.Start).Nanoseconds() / (1000 * 1000),
 			ObfuscatedAttributes:  attrs,
 			ErrorBeacon:           txn.Reply.ErrorBeacon,
 			Agent:                 txn.Reply.JSAgentFile,
@@ -917,7 +925,7 @@ func endDatastore(s *DatastoreSegment) error {
 }
 
 func externalSegmentMethod(s *ExternalSegment) string {
-	if "" != s.Procedure {
+	if s.Procedure != "" {
 		return s.Procedure
 	}
 	r := s.Request
@@ -926,7 +934,7 @@ func externalSegmentMethod(s *ExternalSegment) string {
 	}
 
 	if nil != r {
-		if "" != r.Method {
+		if r.Method != "" {
 			return r.Method
 		}
 		// Golang's http package states that when a client's Request has
@@ -995,7 +1003,7 @@ func endMessage(s *MessageProducerSegment) error {
 		return errAlreadyEnded
 	}
 
-	if "" == s.DestinationType {
+	if s.DestinationType == "" {
 		s.DestinationType = MessageQueue
 	}
 
@@ -1077,7 +1085,7 @@ func (thd *thread) CreateDistributedTracePayload(hdrs http.Header) {
 		return
 	}
 
-	if "" == txn.Reply.AccountID || "" == txn.Reply.TrustedAccountKey {
+	if txn.Reply.AccountID == "" || txn.Reply.TrustedAccountKey == "" {
 		// We can't create a payload:  The application is not yet
 		// connected or serverless distributed tracing configuration was
 		// not provided.
@@ -1182,7 +1190,7 @@ func (txn *txn) acceptDistributedTraceHeadersLocked(t TransportType, hdrs http.H
 		return nil
 	}
 
-	if "" == txn.Reply.AccountID || "" == txn.Reply.TrustedAccountKey {
+	if txn.Reply.AccountID == "" || txn.Reply.TrustedAccountKey == "" {
 		// We can't accept a payload:  The application is not yet
 		// connected or serverless distributed tracing configuration was
 		// not provided.
@@ -1202,7 +1210,7 @@ func (txn *txn) acceptDistributedTraceHeadersLocked(t TransportType, hdrs http.H
 
 	// and let's also do our trustedKey check
 	receivedTrustKey := payload.TrustedAccountKey
-	if "" == receivedTrustKey {
+	if receivedTrustKey == "" {
 		receivedTrustKey = payload.Account
 	}
 
@@ -1214,7 +1222,7 @@ func (txn *txn) acceptDistributedTraceHeadersLocked(t TransportType, hdrs http.H
 		return errTrustedAccountKey
 	}
 
-	if 0 != payload.Priority {
+	if payload.Priority != 0 {
 		txn.BetterCAT.Priority = payload.Priority
 	}
 
@@ -1252,7 +1260,7 @@ func (thd *thread) AddUserSpanAttribute(key string, val interface{}) error {
 	txn.Lock()
 	defer txn.Unlock()
 
-	if outputDests := applyAttributeConfig(thd.Attrs.config, key, destSpan); 0 == outputDests {
+	if outputDests := applyAttributeConfig(thd.Attrs.config, key, destSpan); outputDests == 0 {
 		return nil
 	}
 

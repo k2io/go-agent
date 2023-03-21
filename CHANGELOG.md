@@ -1,3 +1,118 @@
+## 3.20.4
+
+### Fixed
+* nrmssql driver updated to use version maintained by Microsoft
+* bug where error messages were not truncated to the maximum size, and would get dropped if they were too large
+* bug where number of span events was hard coded to 1000, and config setting was being ignored
+
+### Added
+* improved performance of ignore error code checks in agent
+* HTTP error codes can be set as expected by adding them to ErrorCollector.ExpectStatusCodes in the config
+
+### Support Statement
+New Relic recommends that you upgrade the agent regularly to ensure that you’re getting the latest features and performance benefits. Additionally, older releases will no longer be supported when they reach end-of-life.
+
+We also recommend using the latest version of the Go language. At minimum, you should at least be using no version of Go older than what is supported by the Go team themselves.
+
+See the [Go Agent EOL Policy](https://docs.newrelic.com/docs/apm/agents/go-agent/get-started/go-agent-eol-policy/) for details about supported versions of the Go Agent and third-party components.
+
+## 3.20.3
+
+Please note that the v2 go agent is no longer supported according to our EOL policy. 
+
+### Fixed
+* Performance Improvements for compression
+* nrsnowflake updated to golang 1.17 versions of packages
+
+### Support Statement
+New Relic recommends that you upgrade the agent regularly to ensure that you’re getting the latest features and performance benefits. Additionally, older releases will no longer be supported when they reach end-of-life.
+
+We also recommend using the latest version of the Go language. At minimum, you should at least be using no version of Go older than what is supported by the Go team themselves.
+
+See the [Go Agent EOL Policy](https://docs.newrelic.com/docs/apm/agents/go-agent/get-started/go-agent-eol-policy/) for details about supported versions of the Go Agent and third-party components.
+
+
+## 3.20.2
+
+### Added
+* New `NoticeExpectedError()` method allows you to capture errors that you are expecting to handle, without triggering alerts
+
+### Fixed
+* More defensive harvest cycle code that will avoid crashing even in the event of a panic.
+* Update `nats-server` version to avoid known zip-slip exploit
+* Update `labstack/echo` version to mitigate known open redirect exploit
+
+### Support Statement
+New Relic recommends that you upgrade the agent regularly to ensure that you’re getting the latest features and performance benefits. Additionally, older releases will no longer be supported when they reach end-of-life.
+
+We also recommend using the latest version of the Go language. At minimum, you should at least be using no version of Go older than what is supported by the Go team themselves.
+
+See the [Go Agent EOL Policy](https://docs.newrelic.com/docs/apm/agents/go-agent/get-started/go-agent-eol-policy/) for details about supported versions of the Go Agent and third-party components.
+
+## 3.20.1
+
+### Added
+* New integration `nrpgx5` v1.0.0 to instrument `github.com/jackc/pgx/v5`. 
+
+### Changed
+
+* Changed the following `TraceOption` function to be consistent with their usage and other related identifier names. The old names remain for backward compatibility, but new code should use the new names. 
+   * `WithIgnoredPrefix` -> `WithIgnoredPrefixes`
+   * `WithPathPrefix` -> `WithPathPrefixes`
+* Implemented better handling of Code Level Metrics reporting when the data (e.g., function names) are excessively long, so that those attributes are suppressed rather than being reported with truncated names. Specifically:
+   * Attributes with values longer than 255 characters are dropped.
+   * No CLM attributes at all will be attached to a trace if the `code.function` attribute is empty or is longer than 255 characters.
+   * No CLM attributes at all will be attached to a trace if both `code.namespace` and `code.filepath` are longer than 255 characters.
+
+### Support Statement
+New Relic recommends that you upgrade the agent regularly to ensure that you’re getting the latest features and performance benefits. Additionally, older releases will no longer be supported when they reach end-of-life.
+
+We also recommend using the latest version of the Go language. At minimum, you should at least be using no version of Go older than what is supported by the Go team themselves.
+
+See the [Go Agent EOL Policy](https://docs.newrelic.com/docs/apm/agents/go-agent/get-started/go-agent-eol-policy/) for details about supported versions of the Go Agent and third-party components.
+
+## 3.20.0
+
+**PLEASE READ** these changes, and verify your config settings to ensure your application behaves how you intend it to. This release changes some default behaviors in the go agent.
+
+### Added
+* The Module Dependency Metrics feature was added. This collects the list of modules imported into your application, to aid in management of your application dependencies, enabling easier vulnerability detection and response, etc.
+   * This feature is enabled by default, but may be disabled by explicitly including `ConfigModuleDependencyMetricsEnable(false)` in your application, or setting the equivalent environment variable or `Config` field direclty.
+   * Modules may be explicitly excluded from the report via the `ConfigModuleDependencyMetricsIgnoredPrefixes` option.
+   * Excluded module names may be redacted via the `ConfigModuleDependencyMetricsRedactIgnoredPrefixes` option. This is enabled by default.
+* Application Log Forwarding will now be **ENABLED** by default
+   * Automatic application log forwarding is now enabled by default. This means that logging frameworks wrapped with one of the [logcontext-v2 integrations](https://docs.newrelic.com/docs/apm/agents/go-agent/get-started/go-agent-compatibility-requirements/) will automatically send enriched application logs to New Relic with this version of the agent. To learn more about this feature, see the [APM logs in context documentation](https://docs.newrelic.com/docs/logs/logs-context/logs-in-context/). For additional configuration options, see the [Go logs in context documentation](https://docs.newrelic.com/docs/logs/logs-context/configure-logs-context-go). To learn about how to toggle log ingestion on or off by account, see our documentation to [disable automatic](https://docs.newrelic.com/docs/logs/logs-context/disable-automatic-logging) logging via the UI or API.
+   * If you are using a logcontext-v2 extension, but don't want the agent to automatically forward logs, please configure `ConfigAppLogForwardingEnabled(false)` in your application.
+   * Environment variables have been added for all application logging config options:
+   	* `NEW_RELIC_APPLICATION_LOGGING_ENABLED`
+	* `NEW_RELIC_APPLICATION_LOGGING_FORWARDING_ENABLED`
+	* `NEW_RELIC_APPLICATION_LOGGING_FORWARDING_MAX_SAMPLES_STORED`
+	* `NEW_RELIC_APPLICATION_LOGGING_METRICS_ENABLED`
+	* `NEW_RELIC_APPLICATION_LOGGING_LOCAL_DECORATING_ENABLED`
+* Custom Event Limit Increase
+   * This version increases the **DEFAULT** limit of custom events from 10,000 events per minute to 30,000 events per minute. In the scenario that custom events were being limited, this change will allow more custom events to be sent to New Relic. There is also a new configurable **MAXIMUM** limit of 100,000 events per minute. To change the limits, set `ConfigCustomInsightsEventsMaxSamplesStored(limit)` to the limit you want in your application. To learn more about the change and how to determine if custom events are being dropped, see our Explorers Hub [post](https://discuss.newrelic.com/t/send-more-custom-events-with-the-latest-apm-agents/190497).
+   * New config option `ConfigCustomInsightsEventsEnabled(false)` can be used to disable the collection of custom events in your application.
+
+### Changed
+* Changed the following names to be consistent with their usage and other related identifier names. The old names remain for backward compatibility, but new code should use the new names.
+   * `ConfigCodeLevelMetricsIgnoredPrefix` -> `ConfigCodeLevelMetricsIgnoredPrefixes`
+   * `ConfigCodeLevelMetricsPathPrefix` -> `ConfigCodeLevelMetricsPathPrefixes`
+   * `NEW_RELIC_CODE_LEVEL_METRICS_PATH_PREFIX` -> `NEW_RELIC_CODE_LEVEL_METRICS_PATH_PREFIXES`
+   * `NEW_RELIC_CODE_LEVEL_METRICS_IGNORED_PREFIX` -> `NEW_RELIC_CODE_LEVEL_METRICS_IGNORED_PREFIXES`
+
+* When excluding information reported from CodeLevelMetrics via the `IgnoredPrefixes` or `PathPrefixes` configuration fields (e.g., by specifying `ConfigCodeLevelMetricsIgnoredPrefixes` or `ConfigCodeLevelMetricsPathPrefixes`), the names of the ignored prefixes and the configured path prefixes may now be redacted from the agent configuration information sent to New Relic.
+   * This redaction is enabled by default, but may be disabled by supplying a `false` value to `ConfigCodeLevelMetricsRedactPathPrefixes` or `ConfigCodeLevelMetricsRedactIgnoredPrefixes`, or by setting the corresponding `Config` fields or environment variables to `false`.
+
+### Fixed
+* [#583](https://github.com/newrelic/go-agent/issues/583): fixed a bug in zerologWriter where comma separated fields in log message confused the JSON parser and could cause panics.
+
+### Support Statement
+New Relic recommends that you upgrade the agent regularly to ensure that you’re getting the latest features and performance benefits. Additionally, older releases will no longer be supported when they reach end-of-life.
+
+We also recommend using the latest version of the Go language. At minimum, you should at least be using no version of Go older than what is supported by the Go team themselves.
+
+See the [Go Agent EOL Policy](https://docs.newrelic.com/docs/apm/agents/go-agent/get-started/go-agent-eol-policy/) for details about supported versions of the Go Agent and third-party components.
+
 ## 3.19.2
 
 ### Changed
