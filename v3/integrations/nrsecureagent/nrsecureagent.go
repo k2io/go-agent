@@ -31,8 +31,7 @@ func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 	return nil
 }
 
-//config options
-
+/* getting config through config YAML file */
 type ConfigOption func(*SecurityConfig)
 
 func ConfigSecurityFromYaml() ConfigOption {
@@ -56,12 +55,13 @@ func ConfigSecurityFromYaml() ConfigOption {
 	}
 }
 
+/* getting config through env variables */
+
 // NEW_RELIC_SECURITY_ENABLE
-// NEW_RELIC_SECURITY_LOG_LEVEL
+// NEW_RELIC_SECURITY_VALIDATOR_SERVICE_END_POINT_URL
 // NEW_RELIC_SECURITY_MODE
-// NEW_RELIC_SECURITY_SECURITY_HOME_PATH
-// NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL
-// NEW_RELIC_SECURITY_Detection_DisableRxss
+// NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE
+// NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS
 
 func ConfigSecurityFromEnvironment() ConfigOption {
 	return func(cfg *SecurityConfig) {
@@ -82,9 +82,35 @@ func ConfigSecurityFromEnvironment() ConfigOption {
 		}
 
 		assignBool(&cfg.Security.Enabled, "NEW_RELIC_SECURITY_ENABLE")
-		assignString(&cfg.Security.Validator_service_url, "NEW_RELIC_SECURITY_VALIDATOR_SERCICE_END_POINT_URL")
+		assignString(&cfg.Security.Validator_service_url, "NEW_RELIC_SECURITY_VALIDATOR_SERVICE_END_POINT_URL")
 		assignString(&cfg.Security.Mode, "NEW_RELIC_SECURITY_MODE")
 		assignBool(&cfg.Security.Agent.Enabled, "NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE")
-		assignBool(&cfg.Security.Detection.Rci.Enabled, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
+		assignBool(&cfg.Security.Detection.Rxss.Enabled, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
+	}
+}
+
+/* getting config through config methods */
+
+func ConfigSecurityMode(mode string) ConfigOption {
+	return func(cfg *SecurityConfig) {
+		cfg.Security.Mode = mode
+	}
+}
+
+func ConfigSecurityValidatorServiceEndPointUrl(url string) ConfigOption {
+	return func(cfg *SecurityConfig) {
+		cfg.Security.Validator_service_url = url
+	}
+}
+
+func ConfigSecurityDetectionDisableRxss(isEnabled bool) ConfigOption {
+	return func(cfg *SecurityConfig) {
+		cfg.Security.Detection.Rxss.Enabled = isEnabled
+	}
+}
+
+func ConfigSecurityEnable(isEnabled bool) ConfigOption {
+	return func(cfg *SecurityConfig) {
+		cfg.Security.Enabled = isEnabled
 	}
 }
