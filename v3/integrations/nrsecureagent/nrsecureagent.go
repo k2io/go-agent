@@ -16,8 +16,19 @@ type SecurityConfig struct {
 	Error error
 }
 
+// defaultSecurityConfig creates a Security Config populated with default settings.
+func defaultSecurityConfig() SecurityConfig {
+	cfg := SecurityConfig{}
+	cfg.Security.Enabled = true
+	cfg.Security.Validator_service_url = "wss://csec.nr-data.net"
+	cfg.Security.Mode = "IAST"
+	cfg.Security.Agent.Enabled = true
+	cfg.Security.Detection.Rxss.Enabled = true
+	return cfg
+}
+
 func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
-	c := SecurityConfig{}
+	c := defaultSecurityConfig()
 	for _, fn := range opts {
 		if nil != fn {
 			fn(&c)
@@ -57,11 +68,13 @@ func ConfigSecurityFromYaml() ConfigOption {
 
 /* getting config through env variables */
 
-// NEW_RELIC_SECURITY_ENABLE
-// NEW_RELIC_SECURITY_VALIDATOR_SERVICE_END_POINT_URL
-// NEW_RELIC_SECURITY_MODE
-// NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE
-// NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS
+// ConfigSecurityFromEnvironment populates the config based on environment variables:
+
+//		NEW_RELIC_SECURITY_ENABLED                                			sets Security.Enabled
+//		NEW_RELIC_SECURITY_VALIDATOR_SERVICE_URL                 			sets Security.Validator_service_url
+//		NEW_RELIC_SECURITY_MODE                      						sets Security.Mode
+//		NEW_RELIC_SECURITY_AGENT_ENABLED          							sets Security.Agent.Enabled
+//		NEW_RELIC_SECURITY_DETECTION_RXSS_ENABLED 							sets cfg.Security.Detection.Rxss.Enabled
 
 func ConfigSecurityFromEnvironment() ConfigOption {
 	return func(cfg *SecurityConfig) {
@@ -81,34 +94,38 @@ func ConfigSecurityFromEnvironment() ConfigOption {
 			}
 		}
 
-		assignBool(&cfg.Security.Enabled, "NEW_RELIC_SECURITY_ENABLE")
-		assignString(&cfg.Security.Validator_service_url, "NEW_RELIC_SECURITY_VALIDATOR_SERVICE_END_POINT_URL")
+		assignBool(&cfg.Security.Enabled, "NEW_RELIC_SECURITY_ENABLED")
+		assignString(&cfg.Security.Validator_service_url, "NEW_RELIC_SECURITY_VALIDATOR_SERVICE_URL")
 		assignString(&cfg.Security.Mode, "NEW_RELIC_SECURITY_MODE")
-		assignBool(&cfg.Security.Agent.Enabled, "NEW_RELIC_SECURITY_FORCE_COMPLETE_DISABLE")
-		assignBool(&cfg.Security.Detection.Rxss.Enabled, "NEW_RELIC_SECURITY_DETECTION_DISABLE_RXSS")
+		assignBool(&cfg.Security.Agent.Enabled, "NEW_RELIC_SECURITY_AGENT_ENABLED")
+		assignBool(&cfg.Security.Detection.Rxss.Enabled, "NEW_RELIC_SECURITY_DETECTION_RXSS_ENABLED")
 	}
 }
 
 /* getting config through config methods */
 
+// ConfigSecurityMode sets security mode default: IAST
 func ConfigSecurityMode(mode string) ConfigOption {
 	return func(cfg *SecurityConfig) {
 		cfg.Security.Mode = mode
 	}
 }
 
+// ConfigSecurityValidatorServiceEndPointUrl sets security validator service endpoint.
 func ConfigSecurityValidatorServiceEndPointUrl(url string) ConfigOption {
 	return func(cfg *SecurityConfig) {
 		cfg.Security.Validator_service_url = url
 	}
 }
 
+// ConfigSecurityDetectionDisableRxss used to disable rxss validation.
 func ConfigSecurityDetectionDisableRxss(isEnabled bool) ConfigOption {
 	return func(cfg *SecurityConfig) {
 		cfg.Security.Detection.Rxss.Enabled = isEnabled
 	}
 }
 
+// ConfigSecurityEnable sets Security.Enabled
 func ConfigSecurityEnable(isEnabled bool) ConfigOption {
 	return func(cfg *SecurityConfig) {
 		cfg.Security.Enabled = isEnabled
