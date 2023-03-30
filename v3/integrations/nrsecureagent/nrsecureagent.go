@@ -19,7 +19,7 @@ type SecurityConfig struct {
 // defaultSecurityConfig creates a Security Config populated with default settings.
 func defaultSecurityConfig() SecurityConfig {
 	cfg := SecurityConfig{}
-	cfg.Security.Enabled = true
+	cfg.Security.Enabled = false
 	cfg.Security.Validator_service_url = "wss://csec.nr-data.net"
 	cfg.Security.Mode = "IAST"
 	cfg.Security.Agent.Enabled = true
