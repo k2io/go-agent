@@ -6,13 +6,11 @@ Add security agent
 
 ```
 go get github.com/newrelic/go-agent/v3/integrations/nrcsecagent 
-
 ```
 Then import the package in your application:
 
 ```
-import nrcsecagent "github.com/newrelic/go-agent/v3/integrations/nrcsecagent"
-
+import "github.com/newrelic/go-agent/v3/integrations/nrcsecagent"
 ```
 
 ### Step 2.1: Create an Application
@@ -32,8 +30,8 @@ After instantiating your app, Init nrcsecagent as given below
     err := nrcsecagent.InitSecurityAgent(
         app,
        	nrcsecagent.ConfigSecurityMode("IAST"),
-		    nrcsecagent.ConfigSecurityValidatorServiceEndPointUrl("wss://csec.nr-data.net"),
-	    	nrcsecagent.ConfigSecurityEnable(true),
+        nrcsecagent.ConfigSecurityValidatorServiceEndPointUrl("wss://csec.nr-data.net"),
+        nrcsecagent.ConfigSecurityEnable(true),
     )
 ```
 
