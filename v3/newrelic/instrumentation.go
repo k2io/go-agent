@@ -111,8 +111,16 @@ func WrapHandleFunc(app *Application, pattern string, handler func(http.Response
 	return p, func(w http.ResponseWriter, r *http.Request) { h.ServeHTTP(w, r) }
 }
 
-//WrapListen
+// WrapListen instruments Server Listener functions. To
+// instrument this code:
+//
+// http.ListenAndServe(":8000", nil)
+//
+// Perform this replacement:
+//
+//http.ListenAndServe(newrelic.WrapListen(":8000"), nil)
 
+//WrapListen access application serves port that will use to perform fuzz request in IAST scanning.
 func WrapListen(add string) string {
 	SecureAgent.SendEvent("APP_INFO", add)
 	return add

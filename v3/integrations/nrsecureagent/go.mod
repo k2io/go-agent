@@ -1,4 +1,4 @@
-module github.com/newrelic/go-agent/v3/integrations/nrsecureagent
+module github.com/newrelic/go-agent/v3/integrations/nrcsecagent
 
 go 1.17
 

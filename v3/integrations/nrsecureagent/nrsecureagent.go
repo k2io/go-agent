@@ -1,4 +1,4 @@
-package nrsecureagent
+package nrcsecagent
 
 import (
 	"fmt"
@@ -27,6 +27,8 @@ func defaultSecurityConfig() SecurityConfig {
 	return cfg
 }
 
+// InitSecurityAgent initilized the nrcsecagent agent with provied config.
+
 func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 	c := defaultSecurityConfig()
 	for _, fn := range opts {
@@ -42,9 +44,9 @@ func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 	return nil
 }
 
-/* getting config through config YAML file */
 type ConfigOption func(*SecurityConfig)
 
+//Getting config through config YAML file
 func ConfigSecurityFromYaml() ConfigOption {
 	return func(cfg *SecurityConfig) {
 		confgFilePath := os.Getenv("NEW_RELIC_SECURITY_CONFIG_PATH")
