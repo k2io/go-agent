@@ -28,6 +28,9 @@ func defaultSecurityConfig() SecurityConfig {
 }
 
 func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
+	if app == nil {
+		return fmt.Errorf("Newrelic application context cannot be null")
+	}
 	c := defaultSecurityConfig()
 	for _, fn := range opts {
 		if nil != fn {
