@@ -1,4 +1,7 @@
-package nrsecureagent
+// Copyright 2022 New Relic Corporation. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+package nrcsecagent
 
 import (
 	"fmt"
@@ -6,13 +9,13 @@ import (
 	"os"
 	"strconv"
 
-	secAgent "github.com/k2io/go-k2secure"
+	securityAgent "github.com/k2io/go-k2secure"
 	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 	"gopkg.in/yaml.v2"
 )
 
 type SecurityConfig struct {
-	secAgent.SecurityAgentConfig
+	securityAgent.SecurityAgentConfig
 	Error error
 }
 
@@ -27,6 +30,7 @@ func defaultSecurityConfig() SecurityConfig {
 	return cfg
 }
 
+// InitSecurityAgent initilized the nrcsecagent agent with provied config.
 func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 	if app == nil {
 		return fmt.Errorf("Newrelic application context cannot be null")
@@ -40,14 +44,14 @@ func InitSecurityAgent(app *newrelic.Application, opts ...ConfigOption) error {
 			}
 		}
 	}
-	secureAgent := secAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License, app.Config().Logger.DebugEnabled())
+	secureAgent := securityAgent.InitSecurityAgent(c.Security, app.Config().AppName, app.Config().License, app.Config().Logger.DebugEnabled())
 	newrelic.InitSecurityAgent(secureAgent)
 	return nil
 }
 
-/* getting config through config YAML file */
 type ConfigOption func(*SecurityConfig)
 
+//Getting config through config YAML file
 func ConfigSecurityFromYaml() ConfigOption {
 	return func(cfg *SecurityConfig) {
 		confgFilePath := os.Getenv("NEW_RELIC_SECURITY_CONFIG_PATH")
@@ -73,15 +77,14 @@ func ConfigSecurityFromYaml() ConfigOption {
 
 // ConfigSecurityFromEnvironment populates the config based on environment variables:
 
-//		NEW_RELIC_SECURITY_ENABLED                                			sets Security.Enabled
-//		NEW_RELIC_SECURITY_VALIDATOR_SERVICE_URL                 			sets Security.Validator_service_url
-//		NEW_RELIC_SECURITY_MODE                      						sets Security.Mode
-//		NEW_RELIC_SECURITY_AGENT_ENABLED          							sets Security.Agent.Enabled
-//		NEW_RELIC_SECURITY_DETECTION_RXSS_ENABLED 							sets cfg.Security.Detection.Rxss.Enabled
+//		NEW_RELIC_SECURITY_ENABLED							sets Security.Enabled
+//		NEW_RELIC_SECURITY_VALIDATOR_SERVICE_URL			sets Security.Validator_service_url
+//		NEW_RELIC_SECURITY_MODE								sets Security.Mode
+//		NEW_RELIC_SECURITY_AGENT_ENABLED					sets Security.Agent.Enabled
+//		NEW_RELIC_SECURITY_DETECTION_RXSS_ENABLED			sets cfg.Security.Detection.Rxss.Enabled
 
 func ConfigSecurityFromEnvironment() ConfigOption {
 	return func(cfg *SecurityConfig) {
-
 		assignBool := func(field *bool, name string) {
 			if env := os.Getenv(name); env != "" {
 				if b, err := strconv.ParseBool(env); nil != err {
