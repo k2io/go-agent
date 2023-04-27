@@ -1,7 +1,7 @@
 // Copyright 2022 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package nrcsecagent
+package nrsecurityagent
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 
-	securityAgent "github.com/k2io/go-k2secure"
+	securityAgent "github.com/newrelic/csec-go-agent"
 	newrelic "github.com/newrelic/go-agent/v3/newrelic"
 	"gopkg.in/yaml.v2"
 )
