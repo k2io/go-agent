@@ -152,7 +152,9 @@ func (s *Segment) End() {
 	if s == nil {
 		return
 	}
-	if s.Name == "async" {
+
+	if s.StartTime.thread != nil && s.StartTime.thread.thread != nil && s.StartTime.thread.thread.threadID > 0 {
+		//async thread
 		SecureAgent.SendEvent("NEW_GOROUTINE_END", "")
 	}
 	if err := endBasic(s); err != nil {

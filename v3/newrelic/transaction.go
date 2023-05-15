@@ -46,9 +46,6 @@ func (txn *Transaction) End() {
 	if txn.thread.IsWeb {
 		SecureAgent.SendEvent("INBOUND_END", "")
 	}
-	if txn.thread.IsAsynkOperation {
-		SecureAgent.SendEvent("NEW_GOROUTINE_TR_END", txn)
-	}
 	txn.thread.logAPIError(txn.thread.End(r), "end transaction", nil)
 }
 
@@ -330,8 +327,10 @@ func (txn *Transaction) startSegmentAt(at time.Time) SegmentStartTime {
 //	// ... code you want to time here ...
 //	segment.End()
 func (txn *Transaction) StartSegment(name string) *Segment {
-	if name == "async" {
-		SecureAgent.SendEvent("NEW_GOROUTINE_LINKER", txn)
+
+	if txn != nil && txn.thread.thread != nil && txn.thread.thread.threadID > 0 {
+		//Segment start by the async thread
+		SecureAgent.SendEvent("NEW_GOROUTINE_LINKER", txn.thread.csecData)
 	}
 	return &Segment{
 		StartTime: txn.StartSegmentNow(),
@@ -530,7 +529,10 @@ func (txn *Transaction) NewGoroutine() *Transaction {
 		return nil
 	}
 	newTxn := txn.thread.NewGoroutine()
-	SecureAgent.SendEvent("NEW_GOROUTINE", newTxn)
+	if newTxn.thread.csecData == nil {
+		csecData := SecureAgent.SendEvent("NEW_GOROUTINE", "")
+		newTxn.thread.csecData = csecData
+	}
 	return newTxn
 }
 
